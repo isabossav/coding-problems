@@ -90,6 +90,6 @@ public class Solution {
         int B = StdIn.readInt();
         int C = StdIn.readInt();
 
-        int sol = Solution1.solve(A, B, C);
+        int sol = Solution.solve(A, B, C);
     }
 }
