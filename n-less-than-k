@@ -10,7 +10,6 @@ import edu.princeton.cs.algs4.StdIn;
 
 public class Solution {
     public static int solve(ArrayList<Integer> A, int B, int C) {
-        System.out.printf("B is %d, C is %d\n", B, C);
         int n = A.size();
         
         // create an array of the digits of C
@@ -19,8 +18,6 @@ public class Solution {
             digits.add(0, C % 10);
             C /= 10;
         }
-
-        System.out.println("Size of digits is " + digits.size());
 
         // if B > number of digits of C, or A is empty or B or C are 0
         // there are no possible numbers
@@ -51,9 +48,6 @@ public class Solution {
             smaller[A.get(i) + 1] += 1;
         for (int i = 1; i <= NUM_DIGITS; i++)
             smaller[i] += smaller[i-1];
-
-        System.out.println("Smaller:");
-        System.out.println(Arrays.toString(smaller));
             
         // sol[i] = # of numbers of length i < first i digits of C
         // sol[B] = # of numbers of length B < C (solution!)
@@ -62,7 +56,6 @@ public class Solution {
         
         boolean check = true;
         for (int i = 1; i <= B; i++) {
-            System.out.println("\nRound " + i);
             int x = digits.get(i-1);
             int s = smaller[x];
             // 0 does not count for the most significant digit unless we are looking
@@ -75,8 +68,6 @@ public class Solution {
             // if it is, we need to account for those extra nums
             if (check) sol[i] += s;
             check = check && (smaller[x + 1] == smaller[x] + 1);
-
-            System.out.println(Arrays.toString(sol));
         }
         
         return sol[B];
