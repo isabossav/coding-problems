@@ -1,0 +1,95 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import edu.princeton.cs.algs4.StdIn;
+
+/* 
+    Given a set of digits(A) in sorted order, find how many mumbers of length B are possible whose value
+    is less than number C
+*/
+
+
+public class Solution {
+    public static int solve(ArrayList<Integer> A, int B, int C) {
+        System.out.printf("B is %d, C is %d\n", B, C);
+        int n = A.size();
+        
+        // create an array of the digits of C
+        ArrayList<Integer> digits = new ArrayList<Integer>();
+        while (C > 0) {
+            digits.add(0, C % 10);
+            C /= 10;
+        }
+
+        System.out.println("Size of digits is " + digits.size());
+
+        // if B > number of digits of C, or A is empty or B or C are 0
+        // there are no possible numbers
+        if (B > digits.size() || n == 0 || B == 0 || digits.size() == 0) 
+            return 0;
+        
+        // if B < number of digits of C, 
+        else if (B < digits.size()) {
+            // If the first digit is 0 and B has more than 1 digit,
+            // 0 doesn't count in the most significant digit
+            if (A.get(0) == 0 && B > 1) return ((n-1) * (int) Math.pow(n, B-1));
+            
+            // otherwise, n^B
+            else return (int)Math.pow(n, B);
+        }
+        
+        else 
+            return findEqual(A, digits, B, C);
+    }
+    
+    private static int findEqual(ArrayList<Integer> A, ArrayList<Integer> digits, int B, int C) {
+        int n = A.size();
+        
+        // smaller[i] = number of elements in A which are smaller than i
+        int NUM_DIGITS = 10;
+        int[] smaller = new int[NUM_DIGITS + 1];
+        for (int i = 0; i < A.size(); i++) 
+            smaller[A.get(i) + 1] += 1;
+        for (int i = 1; i <= NUM_DIGITS; i++)
+            smaller[i] += smaller[i-1];
+
+        System.out.println("Smaller:");
+        System.out.println(Arrays.toString(smaller));
+            
+        // sol[i] = # of numbers of length i < first i digits of C
+        // sol[B] = # of numbers of length B < C (solution!)
+        int[] sol = new int[B+1];
+        sol[0] = 0;
+        
+        boolean check = true;
+        for (int i = 1; i <= B; i++) {
+            System.out.println("\nRound " + i);
+            int x = digits.get(i-1);
+            int s = smaller[x];
+            // 0 does not count for the most significant digit unless we are looking
+            // for one digit numbers only
+            if (i == 1 && A.get(0) == 0 && B > 1) s--;
+                
+            sol[i] += sol[i-1] * n;
+            
+            // check if the previous number is one of the nums in A
+            // if it is, we need to account for those extra nums
+            if (check) sol[i] += s;
+            check = check && (smaller[x + 1] == smaller[x] + 1);
+
+            System.out.println(Arrays.toString(sol));
+        }
+        
+        return sol[B];
+    }
+
+    public static void main(String[] args) {
+        ArrayList<Integer> A = new ArrayList<Integer>();
+        int n = StdIn.readInt();
+        for (int i = 0; i < n; i++)
+            A.add(StdIn.readInt());
+        int B = StdIn.readInt();
+        int C = StdIn.readInt();
+
+        int sol = Solution1.solve(A, B, C);
+    }
+}
