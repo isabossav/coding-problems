@@ -1,0 +1,47 @@
+/*
+* Implement pow(x, n) % d = (x^n) % d
+* Using binary search and taking advantage of the mod property: (a*b) mod c = ((a mod c) * (b mod c)) mod c
+* Since mods cannot be negative, cannot directly use % because it won't work well if x and/or n are negative
+*/
+
+public class PowerFunction {
+    public static int pow(int x, int n, int d) {
+        
+        // if n = 0, it is equivalent to x, n = 1
+        if (n == 0) {
+            x = 1; 
+            n = 1;
+        }
+
+        long res = 1;
+        long m = mod(x, d);
+
+        while (n > 0) {
+            // n is odd
+            if ((n & 1) != 0) 
+                res = mod((res * m), d);
+            
+            long mod_md = mod(m, d);
+            m = mod(mod_md * mod_md, d);
+            n /= 2;
+        }
+        
+        return (int)res;
+    }
+    
+    private static long mod(long x, long d) {
+        // if x is negative, % will give a negative remainder
+        long r = x % d;
+        
+        if (x < 0) {
+            long div = x / d;
+
+            if (d < 0) 
+                r = x - (div + 1) * d;
+            else if (d > 0)
+                r = x - (div - 1) * d;
+        }
+            
+        return r;
+    }
+}
